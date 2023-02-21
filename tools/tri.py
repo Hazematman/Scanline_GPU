@@ -4,7 +4,7 @@ import math
 from decimal import *
 from PIL import Image
 
-m = 32
+m = 16
 n = 0
 
 class FixedPoint:
