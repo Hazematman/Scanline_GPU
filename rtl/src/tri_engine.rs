@@ -49,19 +49,19 @@ impl<'a> TriEngine<'a> {
                 m.reg("end_y", BIT_WIDTH),
             ];
 
-        params[0].default_value(-900i32 as u16);
-        params[1].default_value(-400i32 as u16);
-        params[2].default_value(9400i32 as u16);
+        params[0].default_value(-1000i32 as u16);
+        params[1].default_value(0i32 as u16);
+        params[2].default_value(6000i32 as u16);
         params[3].default_value(0i32 as u16);
-        params[4].default_value(90i32 as u16);
-        params[5].default_value(-90i32 as u16);
-        params[6].default_value(-90i32 as u16);
+        params[4].default_value(50i32 as u16);
+        params[5].default_value(-50i32 as u16);
+        params[6].default_value(-100i32 as u16);
         params[7].default_value(50i32 as u16);
-        params[8].default_value(40i32 as u16);
+        params[8].default_value(50i32 as u16);
         params[9].default_value(0i32 as u16);
         params[10].default_value(0i32 as u16);
-        params[11].default_value(100i32 as u16);
-        params[12].default_value(100i32 as u16);
+        params[11].default_value(111i32 as u16);
+        params[12].default_value(111i32 as u16);
 
         let state = m.reg("state", NUM_STATE_BITS);
         state.default_value(TriState::Start as u32);
@@ -74,7 +74,7 @@ impl<'a> TriEngine<'a> {
         scan_engine.dy[1].drive(params[4]);
         scan_engine.dy[2].drive(params[5]);
 
-        scan_engine.start_x.drive(params[6]);
+        scan_engine.start_x.drive(params[9]);
         scan_engine.end_x.drive(params[11]);
 
         let next_state = if_(state.eq(m.lit(TriState::Start as u32, NUM_STATE_BITS)), {
@@ -99,10 +99,10 @@ impl<'a> TriEngine<'a> {
             m.lit(TriState::Start as u32, NUM_STATE_BITS)
         });
 
-        scan_engine.enable.drive(next_state.eq(m.lit(TriState::Draw as u32, NUM_STATE_BITS)));
+        scan_engine.enable.drive(state.eq(m.lit(TriState::Draw as u32, NUM_STATE_BITS)));
 
         let (e0, e1, e2) = if_(state.eq(m.lit(TriState::Start as u32, NUM_STATE_BITS)), {
-            (m.lit(-900i32 as u16, BIT_WIDTH), m.lit(-400i32 as u16, BIT_WIDTH), m.lit(9400i32 as u16, BIT_WIDTH))
+            (m.lit(-1000i32 as u16, BIT_WIDTH), m.lit(0i32 as u16, BIT_WIDTH), m.lit(6000i32 as u16, BIT_WIDTH))
         }).else_if(state.eq(m.lit(TriState::PostDraw as u32, NUM_STATE_BITS)), {
             (params[0] - params[6], params[1] - params[7], params[2] - params[8])
         }).else_({

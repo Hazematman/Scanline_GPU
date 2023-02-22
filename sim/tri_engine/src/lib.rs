@@ -16,17 +16,32 @@ mod tests {
 
         tri_engine.prop();
         tri_engine.posedge_clk();
+
+        tri_engine.prop();
+        tri_engine.posedge_clk();
+
+        tri_engine.new_scanline = false;
         
         for _y in 0..120 {
             for _x in 0..120 {
                 tri_engine.prop();
-                //println!("State: {}", tri_engine.state_debug);
-                if tri_engine.pixel_write_en {
-                    println!("Drawing {} {}", _x, _y);
-                } 
+                if _y >= 10 {
+                    let width = 100 - 2*(_y - 10);
+                    let last_pixel = _y + width;
+                    if _x >= _y && _x <= last_pixel {
+                        //println!("width, last pixel {} {}", width, last_pixel);
+                        assert_eq!(true, tri_engine.pixel_write_en, "Validate triangle drawing");
+                    }
+                }
+                //println!("State({},{}): {}, {}", _x, _y, tri_engine.state_debug, tri_engine.pixel_addr);
+                //if tri_engine.pixel_write_en {
+                //    println!("Drawing {} {}", _x, _y);
+                //}
                 tri_engine.posedge_clk();
 
-                if _x >= 117 {
+                // Set new scanline for the second last pixel on the scanline
+                // disabling it on the last pixel
+                if _x == 118 {
                     tri_engine.new_scanline = true;
                 } else {
                     tri_engine.new_scanline = false;
