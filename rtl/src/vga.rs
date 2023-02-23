@@ -33,7 +33,7 @@ impl<'a> Vga<'a> {
 
         let (next_column, next_row) = if_(end_of_line & end_of_screen, {
             (m.lit(0u32, BIT_WIDTH), m.lit(0u32, BIT_WIDTH))
-        }).else_if(end_of_screen, {
+        }).else_if(end_of_line, {
             (m.lit(0u32, BIT_WIDTH), row + m.lit(1u32, BIT_WIDTH))
         }).else_({
             (column + m.lit(1u32, BIT_WIDTH), row)
