@@ -36,7 +36,8 @@ impl<'a> VideoEngine<'a> {
         lines[1].write_port(tri_engine.pixel_addr.bits(MAX_MEM_SIZE-1, 0), tri_engine.pixel_data, 
                             tri_engine.pixel_write_en & !buf_selector);
 
-        let new_scanline = vga.current_column.eq(m.lit(Vga::COLUMNS - 2, BIT_WIDTH));
+        let new_scanline = vga.current_column.ge(m.lit(255u32, BIT_WIDTH)) 
+            & vga.current_column.le(m.lit(Vga::COLUMNS - 3, BIT_WIDTH));
         let done_screen = new_scanline & vga.current_row.eq(m.lit(Vga::ROWS, BIT_WIDTH));
 
         let next_buf = if_(new_scanline, {

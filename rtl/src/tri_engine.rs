@@ -33,6 +33,11 @@ impl<'a> TriEngine<'a> {
         let new_scanline = m.input("new_scanline", 1);
         let done_screen = m.input("done_screen", 1);
 
+        // Can use a register to detect rising and falling edges
+        let scanline = m.reg("scanline", 1);
+        scanline.default_value(0u32);
+        scanline.drive_next(new_scanline);
+
         let params = [
                 m.reg("e0", BIT_WIDTH),
                 m.reg("e1", BIT_WIDTH),
@@ -82,7 +87,7 @@ impl<'a> TriEngine<'a> {
         }).else_if(state.eq(m.lit(TriState::Wait as u32, NUM_STATE_BITS)), {
             if_(done_screen, {
                 m.lit(TriState::Start as u32, NUM_STATE_BITS)
-            }).else_if(new_scanline, {
+            }).else_if(scanline & !new_scanline, {
                 m.lit(TriState::Draw as u32, NUM_STATE_BITS)
             }).else_({
                 m.lit(TriState::Wait as u32, NUM_STATE_BITS)
