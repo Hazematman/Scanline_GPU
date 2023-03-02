@@ -46,9 +46,9 @@ impl<'a> ScanEngine<'a> {
         let e1_valid = !c_e1.bit(BIT_WIDTH - 1);
         let e2_valid = !c_e2.bit(BIT_WIDTH - 1);
 
-        let pixel_value = m.lit(1u32, BIT_WIDTH);
+        let pixel_value = m.lit(0xF800u32, BIT_WIDTH);
         let done_internal = index.eq(end_x);
-        let running = enable & !done_internal; 
+        let running = enable & !done_internal;
 
         let pixel_addr = m.output("pixel_addr", index);
         let pixel_data = m.output("pixel_data", pixel_value);
