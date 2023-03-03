@@ -22,7 +22,7 @@ impl<'a> Vga<'a> {
     pub fn new(instance_name: impl Into<String>, p: &'a impl ModuleParent<'a>) -> Vga<'a> {
         const BIT_WIDTH: u32 = 16;
         let m = p.module(instance_name, "Vga");
-        
+
         let column = m.reg("column", BIT_WIDTH);
         let row = m.reg("row", BIT_WIDTH);
         column.default_value(0u32);
@@ -51,7 +51,7 @@ impl<'a> Vga<'a> {
                                                   & row.lt(m.lit(Self::ROWS_VISIBLE, BIT_WIDTH)));
         let current_column = m.output("current_column", column);
         let current_row = m.output("current_row", row);
-        
+
         Vga {
             m,
             h_sync,

@@ -12,6 +12,7 @@ pub struct VideoEngine<'a> {
     pub b: &'a Output<'a>,
     pub h_sync: &'a Output<'a>,
     pub v_sync: &'a Output<'a>,
+    pub blank: &'a Output<'a>,
 }
 
 impl<'a> VideoEngine<'a> {
@@ -45,7 +46,11 @@ impl<'a> VideoEngine<'a> {
             & vga.current_column.le(m.lit(Vga::COLUMNS - 2, BIT_WIDTH));
         let done_screen = !visible_line;
 
-        let next_buf = if_(new_scanline, {
+        let prev_new_scanline = m.reg("prev_new_scanline", 1);
+        prev_new_scanline.drive_next(new_scanline);
+
+        /* On falling edge of new_scanline */
+        let next_buf = if_(prev_new_scanline & !new_scanline, {
             !buf_selector
         }).else_({
             buf_selector
@@ -100,6 +105,7 @@ impl<'a> VideoEngine<'a> {
         let b = m.output("b", b_out);
         let h_sync = m.output("h_sync", vga.h_sync);
         let v_sync = m.output("v_sync", vga.v_sync);
+        let blank = m.output("blank", !vga.data_enable);
 
         buf_selector.drive_next(next_buf);
 
@@ -114,6 +120,7 @@ impl<'a> VideoEngine<'a> {
             b,
             h_sync,
             v_sync,
+            blank,
         }
     }
 }

@@ -26,7 +26,7 @@ mod tests {
 
         match file.write_all("P3\n640 480\n255\n".as_bytes()) {
             Err(why) => panic!("couldn't write to {}: {}", display, why),
-            Ok(_) => println!("successfully wrote to {}", display),
+            Ok(_) => (),
         }
 
         for y in 0..525 {
@@ -35,7 +35,7 @@ mod tests {
                 if x < 640 && y < 480 {
                     match file.write_all(format!("{} {} {} ", video_engine.r, video_engine.g, video_engine.b).as_bytes()) {
                         Err(why) => panic!("couldn't write to {}: {}", display, why),
-                        Ok(_) => println!("successfully wrote to {}", display),
+                        Ok(_) => (),
                     }
                 }
                 if x > 448 {
