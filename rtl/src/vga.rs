@@ -29,7 +29,7 @@ impl<'a> Vga<'a> {
         row.default_value(0u32);
 
         let end_of_line = column.eq(m.lit(Self::COLUMNS-1u32, BIT_WIDTH));
-        let end_of_screen = column.eq(m.lit(Self::ROWS-1u32, BIT_WIDTH));
+        let end_of_screen = row.eq(m.lit(Self::ROWS-1u32, BIT_WIDTH));
 
         let (next_column, next_row) = if_(end_of_line & end_of_screen, {
             (m.lit(0u32, BIT_WIDTH), m.lit(0u32, BIT_WIDTH))
